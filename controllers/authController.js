@@ -114,6 +114,71 @@ exports.updateUser = async (req, res) => {
 };
 
 
+// exports.updateUser = async (req, res) => {
+//   try {
+//     const user = req.user; // from auth middleware
+//     const {
+//       name,
+//       dob,
+//       timeOfBirth,
+//       gender,
+//       maritalStatus,
+//       address,
+//       city,
+//       state,
+//       country,
+//     } = req.body;
+
+//     // ✅ Required Field Validation (Astro App)
+//     if (!name || !dob || !timeOfBirth || !city) {
+//       return res.status(400).json({
+//         message: "Name, DOB, Time of Birth & City are required",
+//       });
+//     }
+
+//     // ✅ Update fields
+//     user.name = name;
+//     user.dob = dob;
+//     user.timeOfBirth = timeOfBirth;
+//     user.gender = gender;
+//     user.maritalStatus = maritalStatus;
+//     user.address = address;
+//     user.city = city;
+//     user.state = state;
+//     user.country = country;
+
+//     // ✅ If profile image uploaded
+//     if (req.file) {
+//       user.profile = req.file.path;
+//     }
+
+//     // ✅ Profile Completed Logic
+//     const profileCompleted =
+//       user.name &&
+//       user.dob &&
+//       user.timeOfBirth &&
+//       user.city;
+
+//     user.profileCompleted = !!profileCompleted;
+
+//     await user.save();
+
+//     res.status(200).json({
+//       message: "Profile updated successfully",
+//       profileCompleted: user.profileCompleted,
+//       data: user,
+//     });
+
+//   } catch (err) {
+//     res.status(500).json({
+//       message: "Update failed",
+//       error: err.message,
+//       console: console.error("Update user error:", err),
+//     });
+//   }
+// };
+
+
 exports.getUserStats = async (req, res) => {
   try {
     const total = await User.countDocuments();

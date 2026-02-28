@@ -110,7 +110,6 @@ app.use('/api/ratings',require("./routes/ratingReviewRoutes.js"));
 app.use('/api/auth/user', authUserRoutes);
 
 
-
 app.use('/api/transits', transitRoutes);
 // const authRoutes = require('./routes/auth');
 // app.use('/api', authRoutes);
