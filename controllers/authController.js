@@ -100,7 +100,7 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-
+ 
     if (req.file) {
       updates.profile = req.file.path;
     }
