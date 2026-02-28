@@ -85,13 +85,13 @@ router.get("/astrologer/:astrologerId/threads", async (req, res) => {
 ========================== */
 router.post("/send", async (req, res) => {
   try {
-    const { userId, astroId, senderId, senderType, message } = req.body;
+    const { userId, astrologerId, senderId, senderType, message } = req.body;
 
     if (!message || !String(message).trim()) {
       return res.status(400).json({ success: false, message: "Message is required" });
     }
 
-    const astrologer = await Astrologer.findById(astroId).select("chatFee perMinuteRate");
+    const astrologer = await Astrologer.findById(astrologerId).select("chatFee perMinuteRate");
     if (!astrologer) {
       return res.status(404).json({ success: false, message: "Astrologer not found" });
     }
@@ -99,7 +99,7 @@ router.post("/send", async (req, res) => {
     if (senderType === "user") {
       const charge = await chargeUserUsage({
         userId,
-        astrologerId: astroId,
+        astrologerId: astrologerId,
         serviceType: "chat",
         minutes: 1,
         allowPartial: false,
@@ -114,12 +114,12 @@ router.post("/send", async (req, res) => {
       }
     }
 
-    const chatId = createChatHash(userId, astroId);
+    const chatId = createChatHash(userId, astrologerId);
 
     const saved = await PrivateChat.create({
       chatId,
       senderId,
-      receiverId: senderType === "user" ? astroId : userId,
+      receiverId: senderType === "user" ? astrologerId : userId,
       message,
       senderType,
     });
