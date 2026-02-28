@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: kalpjyotish-backend
+    env: node
+    rootDir: .
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    healthCheckPath: /

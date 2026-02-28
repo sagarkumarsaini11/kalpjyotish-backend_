@@ -1,0 +1,12 @@
+# Ignore Firebase service account key
+kalpjyothis.json
+notification.json
+google-services.json
+.env
+#./env
+node_modules
+serviceAccountKey.json
+kalpjyotish-d1f52-firebase-adminsdk-fbsvc-94699fae64.json
+
+kapljyotish.json
+config/kalpjyotish-bd41d-firebase-adminsdk-fbsvc-3898b1e3d4.json

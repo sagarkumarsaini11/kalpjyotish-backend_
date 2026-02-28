@@ -1,0 +1,44 @@
+{
+  "name": "kalpjyothisnodejs",
+  "version": "1.0.0",
+  "description": "astrology app and admin backend ",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "server.js",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vikrantbhawani2021/kalpjyothishNodejs.git"
+  },
+  "author": "Abhishek Sharma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vikrantbhawani2021/kalpjyothishNodejs/issues"
+  },
+  "homepage": "https://github.com/Vikrantbhawani2021/kalpjyothishNodejs#readme",
+  "dependencies": {
+    "agora-access-token": "^2.0.4",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.6.0",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.19.1",
+    "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.5",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.3",
+    "twilio": "^5.10.3",
+    "uuid": "^11.1.0"
+  }
+}
