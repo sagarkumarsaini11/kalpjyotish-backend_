@@ -10,45 +10,137 @@ const razorpay = new Razorpay({
 });
 
 // 👉 Add Money to Wallet
+// exports.addMoney = async (req, res) => {
+//   try {
+//     const { userId, amount, reason } = req.body;
+
+//     if (!userId || !amount) {
+//       return res.status(400).json({ success: false, message: 'UserId and amount are required' });
+//     }
+
+//     if (amount <= 0) {
+//       return res.status(400).json({ success: false, message: 'Amount must be greater than 0' });
+//     }
+
+//     // check user exists
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ success: false, message: 'User not found' });
+//     }
+
+//     // find or create wallet
+//     let wallet = await Wallet.findOne({ user: userId });
+//     if (!wallet) {
+//       wallet = await Wallet.create({ user: userId, balance: 0 });
+//     }
+
+//     wallet.balance += amount;
+//     wallet.transactions.push({ type: 'credit', amount, reason: reason || 'Wallet Top-up' });
+
+//     await wallet.save();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: 'Money added successfully',
+//       wallet
+//     });
+//   } catch (err) {
+//     console.error('Add Money error:', err);
+//     res.status(500).json({ success: false, message: 'Server error', error: err.message });
+//   }
+// };
+
+
 exports.addMoney = async (req, res) => {
   try {
-    const { userId, amount, reason } = req.body;
+
+    let { userId, amount, reason, paymentId } = req.body;
 
     if (!userId || !amount) {
-      return res.status(400).json({ success: false, message: 'UserId and amount are required' });
+      return res.status(400).json({
+        success: false,
+        message: "UserId and amount are required"
+      });
     }
+
+    // convert amount to number
+    amount = Number(amount);
 
     if (amount <= 0) {
-      return res.status(400).json({ success: false, message: 'Amount must be greater than 0' });
+      return res.status(400).json({
+        success: false,
+        message: "Amount must be greater than 0"
+      });
     }
 
-    // check user exists
+    // check user
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
     }
 
-    // find or create wallet
+    // find wallet
     let wallet = await Wallet.findOne({ user: userId });
+
     if (!wallet) {
-      wallet = await Wallet.create({ user: userId, balance: 0 });
+      wallet = await Wallet.create({
+        user: userId,
+        balance: 0,
+        transactions: []
+      });
     }
 
-    wallet.balance += amount;
-    wallet.transactions.push({ type: 'credit', amount, reason: reason || 'Wallet Top-up' });
+    // prevent duplicate payment
+    if (paymentId) {
+
+      const duplicate = wallet.transactions.find(
+        (t) => t.paymentId === paymentId
+      );
+
+      if (duplicate) {
+        return res.status(400).json({
+          success: false,
+          message: "Payment already processed"
+        });
+      }
+
+    }
+
+    // atomic wallet update
+    wallet.balance = wallet.balance + amount;
+
+    wallet.transactions.push({
+      type: "credit",
+      amount: amount,
+      reason: reason || "Wallet Top-up",
+      paymentId: paymentId || null,
+      createdAt: new Date()
+    });
 
     await wallet.save();
 
     return res.status(200).json({
       success: true,
-      message: 'Money added successfully',
+      message: "Money added successfully",
       wallet
     });
+
   } catch (err) {
-    console.error('Add Money error:', err);
-    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+
+    console.error("Add Money error:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message
+    });
+
   }
 };
+
 
 // 👉 Get Wallet by UserId
 exports.getWalletByUser = async (req, res) => {
