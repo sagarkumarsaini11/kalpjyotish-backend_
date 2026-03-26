@@ -4,53 +4,49 @@ const { chargeUserUsage } = require("../utilis/billing");
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
+
+    console.log("✅ USER CONNECTED:", socket.id);
+
+    /// 🔥 USER ROOM JOIN
     socket.on("joinUserRoom", ({ userId }) => {
       if (!userId) return;
-      socket.join(`user:${userId}`);
+
+      const room = `user:${userId}`;
+      socket.join(room);
+
+      console.log("👤 JOIN USER ROOM:", room);
     });
 
     /* ======================
-       Join private room
+       JOIN CHAT ROOM
     ====================== */
     socket.on("joinChat", ({ userId, astrologerId }) => {
+
       if (!userId || !astrologerId) {
-        socket.emit("chatError", { message: "userId and astrologerId are required" });
+        socket.emit("chatError", { message: "userId and astrologerId required" });
         return;
       }
 
       const chatId = createChatHash(userId, astrologerId);
+
       socket.join(chatId);
-      socket.emit("joined", chatId);
+
+      console.log("💬 JOIN CHAT:", chatId);
+
+      socket.emit("joined", { chatId });
     });
 
-
     /* ======================
-       Send message
+       SEND MESSAGE
     ====================== */
     socket.on("sendMessage", async (data) => {
+
       try {
         const { userId, astrologerId, senderId, senderType, message } = data || {};
-        if (!userId || !astrologerId || !senderId || !senderType || !message) {
-          socket.emit("chatError", { message: "Invalid message payload" });
-          return;
-        }
 
-        if (senderType === "user") {
-          const charge = await chargeUserUsage({
-            userId,
-            astrologerId,
-            serviceType: "chat",
-            minutes: 1,
-            allowPartial: false,
-          });
-          if (!charge.ok) {
-            socket.emit("chatError", {
-              code: "INSUFFICIENT_BALANCE",
-              message: "Insufficient balance. Please recharge wallet.",
-              data: charge,
-            });
-            return;
-          }
+        if (!userId || !astrologerId || !senderId || !senderType || !message) {
+          socket.emit("chatError", { message: "Invalid payload" });
+          return;
         }
 
         const chatId = createChatHash(userId, astrologerId);
@@ -63,15 +59,18 @@ module.exports = (io) => {
           senderType,
         });
 
-        io.to(chatId).emit("receiveMessage", saved);
-        io.to(`user:${astrologerId}`).emit("threadUpdated", {
+        /// 🔥 FIX EVENT NAME
+        io.to(chatId).emit("newMessage", {
           chatId,
-          userId,
-          astrologerId,
           message: saved.message,
+          senderId: saved.senderId,
           senderType: saved.senderType,
         });
+
+        console.log("📩 MESSAGE SENT:", saved.message);
+
       } catch (err) {
+        console.log("❌ ERROR:", err);
         socket.emit("chatError", { message: "Failed to send message" });
       }
     });

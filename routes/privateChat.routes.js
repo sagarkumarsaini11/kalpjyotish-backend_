@@ -80,6 +80,7 @@ router.get("/astrologer/:astrologerId/threads", async (req, res) => {
   }
 });
 
+
 /* ==========================
    SEND MESSAGE
 ========================== */
